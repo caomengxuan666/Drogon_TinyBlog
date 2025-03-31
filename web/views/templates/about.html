@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>关于我 - Tiny Blog</title>
+    <style>
+        /* 内嵌完整样式表 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar .logo {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            padding: 8px 12px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a.active,
+        .nav-links a:hover {
+            background: #34495e;
+            border-radius: 4px;
+        }
+
+        /* 主要内容区域 */
+        .main-content {
+            display: flex;
+            gap: 40px;
+            padding: 40px 0;
+        }
+
+        .content-area {
+            flex: 3;
+            max-width: 760px;
+        }
+
+        .sidebar {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .page-title {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+        }
+
+        .about-section {
+            margin-bottom: 40px;
+        }
+
+        .about-section h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .skill-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .skill-list li {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+
+        .skill-list li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .contact-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .contact-list a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .contact-list a:hover {
+            color: #2980b9;
+        }
+
+        /* 侧边栏样式 */
+        .widget {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .widget h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .hot-articles li {
+            margin-bottom: 8px;
+        }
+
+        .hot-articles a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+
+        .hot-articles a:hover {
+            text-decoration: underline;
+        }
+
+        .categories li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        /* 页脚样式 */
+        .footer {
+            background: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: #3498db;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .container {
+                width: 100%;
+            }
+            
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .skill-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">Tiny Blog</a>
+            <ul class="nav-links">
+                <li><a href="/">首页</a></li>
+                <li><a href="/about" class="active">关于</a></li>
+                <li><a href="/archive">归档</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="container main-content">
+        <div class="content-area">
+            <h1 class="page-title">关于我</h1>
+            
+            <div class="about-section">
+                <h2>我是谁？</h2>
+                <p>我叫曹梦轩，是一名热衷于C++后端开发的程序员，专注于网络编程和分布式系统设计。热爱开源技术，喜欢分享编程经验和系统设计思路。
+                    当然，我也会写QT客户端，我也精通机器视觉，我还会python，我还深入了解深度学习。
+                    我最喜欢的还是造轮子，哈哈。这是我的GitHub主页 https://github.com/caomengxuan666
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>技术栈</h2>
+                <ul class="skill-list">
+                    <li>C++17/20</li>
+                    <li>Linux系统编程</li>
+                    <li>Boost.Asio</li>
+                    <li>Drogon框架</li>
+                    <li>Redis/MySQL</li>
+                    <li>WebSocket</li>
+                    <li>cmake</li>
+                    <li>OpenCv</li>
+                    <li>Qt</li>
+                    <li>pytorch</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2>联系我</h2>
+                <ul class="contact-list">
+                    <li><a href="2507560089@qq.com">邮箱</a></li>
+                    <li><a href="https://github.com/caomengxuan666" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="widget">
+                <h3>热门文章</h3>
+                <ul class="hot-articles">
+                    <li><a href="/article/1">Drogon框架入门指南</a></li>
+                    <li><a href="/article/2">Boost.Asio网络编程实践</a></li>
+                </ul>
+            </div>
+
+            <div class="widget">
+                <h3>分类</h3>
+                <ul class="categories">
+                    <li>技术（2）</li>
+                    <li>生活（1）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Tiny Blog. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

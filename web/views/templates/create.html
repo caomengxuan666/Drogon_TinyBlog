@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyBlog 书写你的新博客</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet"> -->
+    <link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            background-color: #fff;
+            height: 100%;
+            overflow: hidden;
+            color: #333;
+        }
+
+        #top-container {
+            border-bottom: 1px solid #e8e8e8;
+            padding-left: 30px;
+            display: flex;
+            align-items: center;
+            height: 60px; /* 新增固定高度 */
+        }
+
+        #top-container a {
+            color: #666;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        #top-container a:hover {
+            background-color: #f8f8f8;
+            color: #333;
+            border-color: #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #editor-toolbar {
+            width: 1350px;
+            background-color: #FCFCFC;
+            margin: 0 auto;
+        }
+
+        /* 内容区域改为水平居中布局 */
+        #content {
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        #editor-container {
+            width: calc(100% - 250px); /* 减去侧边栏200px + 右边距30px */
+            margin: 30px 0 150px 30px; /* 上 右 下 左 */
+            background-color: #fff;
+            padding: 20px 50px 50px 50px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+            flex: 1 1 auto;
+        }
+
+
+        #title-container {
+            padding: 20px 0;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        #title-container input {
+            font-size: 30px;
+            border: 0;
+            outline: none;
+            width: 100%;
+            line-height: 1;
+        }
+
+        #editor-text-area {
+            min-height: 900px;
+            margin-top: 20px;
+        }
+
+
+        /* 侧边栏固定宽度 */
+        #header-container {
+            position: relative;
+            width: 250px;
+            margin-left: 20px;
+            background-color: #f1f1f1;
+            height: 100%;
+            overflow-y: auto;
+            flex: 0 0 250px;
+        }
+
+        #header-container li {
+            color: #333;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        #header-container li:hover {
+            text-decoration: underline;
+        }
+
+        #header-container li[type="header1"] {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #header-container li[type="header2"] {
+            font-size: 16px;
+            padding-left: 15px;
+            font-weight: bold;
+        }
+
+        #header-container li[type="header3"] {
+            font-size: 14px;
+            padding-left: 30px;
+        }
+
+        #header-container li[type="header4"] {
+            font-size: 12px;
+            padding-left: 45px;
+        }
+
+        #header-container li[type="header5"] {
+            font-size: 12px;
+            padding-left: 60px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="top-container">
+        <p>
+            <a href="/">&lt;&lt; 返回主页</a>
+        </p>
+        <!-- 新增保存按钮 -->
+        <button id="save-button" style="margin-left: 20px; padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            保存内容
+        </button>
+    </div>
+    <div style="border-bottom: 1px solid #e8e8e8;">
+        <div id="editor-toolbar"></div>
+    </div>
+    <div id="content">
+        <div id="editor-container">
+            <div id="title-container">
+                <input placeholder="Page title...">
+            </div>
+
+            <!-- 新增：标签和介绍输入区域 -->
+            <div style="padding: 20px 0; border-bottom: 1px solid #e8e8e8;">
+                <input id="tag-input" placeholder="Enter tags (comma separated)..." style="font-size: 16px; border: 0; outline: none; width: 100%; line-height: 1;">
+            </div>
+            <div style="padding: 20px 0; border-bottom: 1px solid #e8e8e8;">
+                <textarea id="description-input" placeholder="Enter a short description..." style="font-size: 16px; border: 0; outline: none; width: 100%; height: 80px; resize: none;"></textarea>
+            </div>
+
+            <div id="editor-text-area"></div>
+        </div>
+        <div id="header-container"></div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/index.min.js"></script> -->
+    <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
+    <script>
+        const E = window.wangEditor
+
+        // 切换语言
+        const LANG = location.href.indexOf('lang=en') > 0 ? 'en' : 'zh-CN'
+        E.i18nChangeLanguage(LANG)
+
+        // 标题 DOM 容器
+        const headerContainer = document.getElementById('header-container')
+        headerContainer.addEventListener('mousedown', event => {
+            if (event.target.tagName !== 'LI') return;
+            event.preventDefault();
+
+            const id = event.target.getAttribute('data-id');
+            const targetElement = document.querySelector(`[data-id="${id}"]`);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+
+        const editorConfig = {
+            placeholder: 'Type here...',
+            scroll: false, // 禁止编辑器滚动
+            MENU_CONF: {
+                uploadImage: {
+                    fieldName: 'your-fileName',
+                    base64LimitSize: 10 * 1024 * 1024 // 10M 以下插入 base64
+                }
+            },
+            onChange(editor) {
+                const headers = editor.getElemsByTypePrefix('header');
+                headerContainer.innerHTML = headers.map(header => {
+                    const text = E.SlateNode.string(header);
+                    const { id, type } = header;
+                    return `<li data-id="${id}" type="${type}">${text}</li>`;
+                }).join('');
+            }
+        };
+
+        // 先创建 editor
+        const editor = E.createEditor({
+            selector: '#editor-text-area',
+            content: [],
+            config: editorConfig
+        })
+
+        // 创建 toolbar
+        const toolbar = E.createToolbar({
+            editor,
+            selector: '#editor-toolbar',
+            config: {
+                excludeKeys: 'fullScreen',
+            }
+        })
+
+        // 点击空白处 focus 编辑器
+        document.getElementById('editor-text-area').addEventListener('click', e => {
+            if (e.target.id === 'editor-text-area') {
+                editor.blur()
+                editor.focus(true) // focus 到末尾
+            }
+        })
+
+        // 页面加载时自动恢复内容（从 URL 参数中读取）
+        window.addEventListener('load', () => {
+            const params = new URLSearchParams(window.location.search);
+            const savedContent = params.get('content');
+            if (savedContent) {
+                editor.setHtml(decodeURIComponent(savedContent)); // 自动恢复内容
+            }
+        });
+
+        // 新增：从 URL 中提取用户 ID
+        const getUserIdFromUrl = () => {
+            const pathParts = window.location.pathname.split('/');
+            return parseInt(pathParts[pathParts.length - 1], 10) || null; // 提取最后的部分并转换为整数
+        };
+
+        // 更新保存按钮点击事件逻辑
+        document.getElementById('save-button').addEventListener('click', async () => {
+            const userId = getUserIdFromUrl(); // 获取用户 ID
+            if (!userId) {
+                alert('无法获取用户 ID，请检查 URL 是否正确！');
+                return;
+            }
+
+            const title = document.querySelector('#title-container input').value; // 获取标题
+            const tag = document.getElementById('tag-input').value; // 获取标签
+            const description = document.getElementById('description-input').value; // 获取介绍
+            const content = editor.getHtml(); // 获取编辑器内容
+
+            if (!title || !content || !tag || !description) {
+                alert('标题、标签、介绍和内容均不能为空！');
+                return;
+            }
+
+            // 发送数据到后端
+            try {
+                const response = await fetch('/create/save', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userid: userId,
+                        title: title,
+                        tag: tag, // 新增：标签字段
+                        description: description, // 新增：介绍字段
+                        content: content
+                    })
+                });
+
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('文章保存成功！');
+                } else {
+                    alert('文章保存失败：' + result.message);
+                }
+            } catch (error) {
+                console.error('保存失败：', error);
+                alert('保存失败，请稍后再试！');
+            }
+        });
+    </script>
+</body>
+
+</html>

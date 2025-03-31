@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<%inc
+#include"../models/Articles.h"
+%>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[[ site_name ]] - 首页</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #42b983;
+            --card-bg: #ffffff;
+            --text-color: #34495e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-links a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        .hero-section {
+            height: 400px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .article-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .sidebar {
+            margin-top: 20px;
+        }
+
+        .category-list {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tag-cloud a {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: #f1f1f1;
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .pagination {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>[[ site_name ]]</h1>
+            <nav class="nav-links">
+                <a href="/">首页</a>
+                <a href="/categories">分类</a>
+                <a href="/about">关于</a>
+                <a href="/create/2">创作</a> <!-- 添加创作按钮，默认用用户2发，后面改 -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero-section">
+        <div class="container">
+            <h2>欢迎来到[[ site_name ]]</h2>
+            <p>专注于高质量技术文章分享</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content">
+            <section class="articles">
+                <%c++
+                    // 从控制器获取文章数据 [[8]]
+                    const auto &articles = @@.get<std::vector<drogon_model::sqlite3::Articles>>("articles");
+                    for (const auto &article : articles) {
+                %>
+                <div class="article-card">
+                    <!-- 使用对象属性访问语法 [[6]] -->
+                    <h3><a href="/article/{%article.getValueOfId()%}">{%article.getValueOfTitle()%}</a></h3>
+                    <p class="meta">
+                        <span>作者：{%article.getValueOfId()%}</span>
+                        <span>•</span>
+                        <span>{%article.getValueOfId()%}</span> <!-- 日期截断 -->
+                        <span>•</span>
+                        <span>分类：{%article.getValueOfTag()%}</span>
+                    </p>
+                    <div class="excerpt">
+                        {%article.getValueOfExcerpt()%}
+                    </div>
+                    <div class="tags">
+                        <%c++
+                            // 分割标签字符串 [[8]]
+                            std::string tagsStr = article.getValueOfTag();
+                            std::vector<std::string> tags;
+                            size_t pos;
+                            while ((pos = tagsStr.find(',')) != std::string::npos) {
+                                tags.push_back(tagsStr.substr(0, pos));
+                                tagsStr = tagsStr.substr(pos + 1);
+                            }
+                            if (!tagsStr.empty()) tags.push_back(tagsStr);
+                            for (const auto &tag : tags) {
+                        %>
+                        <span class="tag">#{%tag%}</span>
+                        <%c++ } %>
+                    </div>
+                </div>
+                <%c++ } %>
+            </section>
+
+            <aside class="sidebar">
+                <div class="widget category-list">
+                    <h4>分类</h4>
+                    <ul>
+                        <%c++
+                            // 获取分类数据 [[6]]
+                            const auto& categories = @@.get<std::map<std::string, std::string>>("categories");
+                            for (const auto &[cat, count] : categories) {
+                        %>
+                        <li><a href="/category/{%cat%}">{%cat%} {%count%}</a></li>
+                        <%c++ } %>
+                    </ul>
+                </div>
+
+                <div class="widget hot-articles">
+                    <h4>热门文章</h4>
+                    <%c++
+                        // 获取热门文章数据 [[8]]
+                        const auto &hot_articles = @@.get<std::vector<drogon_model::sqlite3::Articles>>("hot_articles");
+                        for (const auto &article : hot_articles) {
+                    %>
+                    <div class="hot-item"><a href="/article/{%article.getValueOfId()%}">{%article.getValueOfTitle()%}</a></div>
+                    <%c++ } %>
+                </div>
+
+                <div class="widget tag-cloud">
+                    <h4>标签云</h4>
+                    <%c++
+                        // 获取标签数据 [[6]]
+                        const auto &tags = @@.get<std::vector<std::string>>("tags");
+                        for (const auto &tag : tags) {
+                    %>
+                    <a href="/tag/{%tag%}">{%tag%}</a>
+                    <%c++ } %>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 [[ site_name ]] 版权所有</p>
+            <p>Powered by Drogon Framework</p>  
+        </div>
+    </footer>
+</body>
+</html>
