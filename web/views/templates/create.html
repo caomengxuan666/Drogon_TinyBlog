@@ -14,7 +14,6 @@
         body {
             background-color: #fff;
             height: 100%;
-            overflow: hidden;
             color: #333;
         }
 
@@ -23,7 +22,6 @@
             padding-left: 30px;
             display: flex;
             align-items: center;
-            height: 60px; /* 新增固定高度 */
         }
 
         #top-container a {
@@ -51,21 +49,20 @@
 
         /* 内容区域改为水平居中布局 */
         #content {
-            height: calc(100% - 40px);
-            overflow-y: auto;
-            position: relative;
-            display: flex;
-            justify-content: flex-start;
+            display: flex; /* 新增：使用 flex 布局 */
+            align-items: flex-start; /* 新增：顶部对齐 */
+            gap: 30px; /* 新增：设置间距 */
         }
 
         #editor-container {
-            width: calc(100% - 250px); /* 减去侧边栏200px + 右边距30px */
-            margin: 30px 0 150px 30px; /* 上 右 下 左 */
+            margin: 30px auto 150px;
             background-color: #fff;
             padding: 20px 50px 50px 50px;
             border: 1px solid #e8e8e8;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-            flex: 1 1 auto;
+            box-sizing: border-box;
+            width: 90%; 
+            overflow-y: auto; /* 新增：允许垂直滚动 */
         }
 
 
@@ -90,13 +87,16 @@
 
         /* 侧边栏固定宽度 */
         #header-container {
-            position: relative;
-            width: 250px;
-            margin-left: 20px;
+            position: sticky;       /* 新增 */
+            top: 50%;              /* 新增 */
+            align-self: flex-start; /* 新增 */
+            transform: translateY(-50%); /* 新增 */
+            margin-left: auto;     /* 保持原有 */
+            width: 240px;          /* 保持原有 */
             background-color: #f1f1f1;
-            height: 100%;
-            overflow-y: auto;
-            flex: 0 0 250px;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         #header-container li {
