@@ -109,6 +109,16 @@
                 height: 250px;
             }
         }
+
+        .meta span {
+        font-size: 0.9em;
+        color: #6c757d; /* 灰色 */
+        margin-right: 5px;
+        }
+        .meta span:hover {
+            color: #007bff; /* 鼠标悬停时变蓝 */
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -134,42 +144,40 @@
     <div class="container">
         <div class="content">
             <section class="articles">
+        <%c++
+            // 从控制器获取文章数据
+            const auto &articles = @@.get<std::vector<std::tuple<drogon_model::sqlite3::Articles, std::string, std::string>>>("articles");
+            for (const auto &[article, authorName, formattedDate] : articles) {
+        %>
+        <div class="article-card">
+            <h3><a href="/article/{%article.getValueOfId()%}">{%article.getValueOfTitle()%}</a></h3>
+            <p class="meta">
+                <span>作者：{%authorName%}</span>
+                <span>•</span>
+                <span>创作日期:：{%formattedDate%}</span> 
+                <span>•</span>
+                <span>分类：{%article.getValueOfCategory()%}</span>
+            </p>
+            <div class="excerpt">
+                {%article.getValueOfExcerpt()%}
+            </div>
+            <div class="tags">
                 <%c++
-                    // 从控制器获取文章数据 [[8]]
-                    const auto &articles = @@.get<std::vector<drogon_model::sqlite3::Articles>>("articles");
-                    for (const auto &article : articles) {
+                    std::string tagsStr = article.getValueOfTag();
+                    std::vector<std::string> tags;
+                    size_t pos;
+                    while ((pos = tagsStr.find(',')) != std::string::npos) {
+                        tags.push_back(tagsStr.substr(0, pos));
+                        tagsStr = tagsStr.substr(pos + 1);
+                    }
+                    if (!tagsStr.empty()) tags.push_back(tagsStr);
+                    for (const auto &tag : tags) {
                 %>
-                <div class="article-card">
-                    <!-- 使用对象属性访问语法 [[6]] -->
-                    <h3><a href="/article/{%article.getValueOfId()%}">{%article.getValueOfTitle()%}</a></h3>
-                    <p class="meta">
-                        <span>作者：{%article.getValueOfId()%}</span>
-                        <span>•</span>
-                        <span>{%article.getValueOfId()%}</span> <!-- 日期截断 -->
-                        <span>•</span>
-                        <span>分类：{%article.getValueOfTag()%}</span>
-                    </p>
-                    <div class="excerpt">
-                        {%article.getValueOfExcerpt()%}
-                    </div>
-                    <div class="tags">
-                        <%c++
-                            // 分割标签字符串 [[8]]
-                            std::string tagsStr = article.getValueOfTag();
-                            std::vector<std::string> tags;
-                            size_t pos;
-                            while ((pos = tagsStr.find(',')) != std::string::npos) {
-                                tags.push_back(tagsStr.substr(0, pos));
-                                tagsStr = tagsStr.substr(pos + 1);
-                            }
-                            if (!tagsStr.empty()) tags.push_back(tagsStr);
-                            for (const auto &tag : tags) {
-                        %>
-                        <span class="tag">#{%tag%}</span>
-                        <%c++ } %>
-                    </div>
-                </div>
+                <span class="tag">#{%tag%}</span>
                 <%c++ } %>
+            </div>
+        </div>
+        <%c++ } %>
             </section>
 
             <aside class="sidebar">

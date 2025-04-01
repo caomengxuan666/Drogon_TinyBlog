@@ -31,6 +31,8 @@ void create::save(const HttpRequestPtr &req, std::function<void(const HttpRespon
     std::string title = (*json)["title"].asString();
     std::string content = (*json)["content"].asString();
     int userid = (*json)["userid"].asInt();
+    std::string tags=(*json)["tag"].asString();
+    std::string description=(*json)["description"].asString();
 
     // 将内容编码为 HTML 或 Base64（这里选择直接存储 HTML）
     std::string encodedContent = content; // 如果需要 Base64 编码，可以使用 drogon::utils::base64Encode(content)
@@ -45,6 +47,8 @@ void create::save(const HttpRequestPtr &req, std::function<void(const HttpRespon
     article.setAuthorId(userid);
     article.setContent(encodedContent);
     article.setCreatedAt(trantor::Date::now());
+    article.setTag(tags);
+    article.setExcerpt(description);
 
     try {
         // 插入数据库
