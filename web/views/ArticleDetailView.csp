@@ -338,56 +338,130 @@
     <h4>目录</h4>
     <ul id="toc"></ul>
 </div>
+<style>
+    /* 树形目录样式 */
+    .right-sidebar ul {
+        list-style: none;
+        padding-left: 20px; /* 子级缩进 */
+    }
+    .right-sidebar li {
+        margin: 5px 0;
+    }
+    .right-sidebar a {
+        color: #4CAF50;
+        text-decoration: none;
+        transition: text-decoration 0.3s ease;
+    }
+    .right-sidebar a:hover {
+        text-decoration: underline;
+    }
+</style>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const toc = document.getElementById('toc');
-        const headings = document.querySelectorAll('#article-content h1, #article-content h2, #article-content h3, #article-content h4, #article-content h5');
+document.addEventListener('DOMContentLoaded', () => {
+    const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('#article-content h1, #article-content h2, #article-content h3, #article-content h4, #article-content h5, #article-content h6');
 
-    headings.forEach(heading => {
-        // 确保每个标题都有一个唯一的 id
-        if (!heading.id) {
-            heading.id = 'heading-' + ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-            ).replace(/-/g, '');
-        }
+    // 辅助函数：生成唯一 ID
+    function generateUniqueId() {
+        return 'heading-' + ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        ).replace(/-/g, '');
+    }
 
-        const listItem = document.createElement('li');
-        const anchor = document.createElement('a');
-        anchor.href = `#${heading.id}`;
-        anchor.textContent = heading.textContent;
-        listItem.appendChild(anchor);
-        toc.appendChild(listItem);
-    });
+    // 构建树形结构
+    function buildTree(headings) {
+        const tree = [];
+        const stack = [];
 
-        // 添加滚动事件监听器
-        window.addEventListener('scroll', () => {
-            let currentSection = '';
-            headings.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= 150 && rect.bottom >= 150) {
-                    currentSection = section.id;
-                }
-            });
+        headings.forEach(heading => {
+            // 确保每个标题都有唯一的 ID
+            if (!heading.id) {
+                heading.id = generateUniqueId();
+            }
 
-            const tocLinks = document.querySelectorAll('#toc a');
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').substring(1) === currentSection) {
-                    link.classList.add('active');
-                }
-            });
+            // 获取当前标题的层级（如 h1 -> 1, h2 -> 2）
+            const level = parseInt(heading.tagName.substring(1));
+
+            // 创建当前节点
+            const node = {
+                id: heading.id,
+                text: heading.textContent,
+                level: level,
+                children: []
+            };
+
+            // 找到当前节点的父节点
+            while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+                stack.pop(); // 弹出栈顶，直到找到合适的父节点
+            }
+
+            if (stack.length === 0) {
+                // 如果栈为空，说明是顶级节点
+                tree.push(node);
+            } else {
+                // 否则，添加到父节点的 children 中
+                stack[stack.length - 1].children.push(node);
+            }
+
+            // 将当前节点压入栈中
+            stack.push(node);
         });
 
-        // 处理锚点跳转
-        const hash = window.location.hash;
-        if (hash) {
-            const targetElement = document.querySelector(hash);
-            if (targetElement) {
-                // 修改 scrollIntoView 的选项以确保平滑滚动到正确的位置
-                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return tree;
+    }
+
+    // 递归生成目录 HTML
+    function renderTree(tree, parentElement) {
+        tree.forEach(node => {
+            const listItem = document.createElement('li');
+            const anchor = document.createElement('a');
+            anchor.href = `#${node.id}`;
+            anchor.textContent = node.text;
+            listItem.appendChild(anchor);
+
+            // 如果有子节点，递归渲染
+            if (node.children.length > 0) {
+                const childList = document.createElement('ul');
+                renderTree(node.children, childList);
+                listItem.appendChild(childList);
             }
-        }
+
+            parentElement.appendChild(listItem);
+        });
+    }
+
+    // 构建并渲染树形目录
+    const tree = buildTree(headings);
+    renderTree(tree, toc);
+
+    // 滚动高亮逻辑
+    window.addEventListener('scroll', () => {
+        let currentSection = '';
+        headings.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 150) {
+                currentSection = section.id;
+            }
+        });
+
+        const tocLinks = document.querySelectorAll('#toc a');
+        tocLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === currentSection) {
+                link.classList.add('active');
+            }
+        });
     });
+
+    // 处理锚点跳转
+    const hash = window.location.hash;
+    if (hash) {
+        const targetElement = document.querySelector(hash);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+});
     </script>
 
 </body>
