@@ -10,7 +10,7 @@ def run_command(command):
         print(stdout.decode('utf-8'))
 
 def main():
-    isProxy = True  # 这里可以设置为False来测试不使用代理的情况
+    isProxy = True  # 这里可以设置为False不使用代理的
     update_server = True  # 设置为True来更新服务器
 
     if isProxy:
