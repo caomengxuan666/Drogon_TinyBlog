@@ -1,1 +1,0 @@
-nohup /home/cmx/codespace/tiny_blog/web/build/web > log.out 2> error.log &
