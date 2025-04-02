@@ -3,6 +3,7 @@ import subprocess
 from threading import Thread
 import os
 import signal
+import git  # 导入 GitPython
 
 app = Flask(__name__)
 
@@ -54,11 +55,10 @@ def start_service():
             )
             SERVICE_PID = process.pid
             print(f"Started service with PID: {SERVICE_PID}")
-            
 
     except Exception as e:
         print(f"Failed to start service: {str(e)}")
-        
+
 
 def stop_service():
     """停止正在运行的服务"""
@@ -75,30 +75,33 @@ def stop_service():
     else:
         print("No service is currently running.")
         return False
-    
+
+
 def update_git():
-    os.chdir(GIT_DIR)
+    """使用 GitPython 更新仓库"""
     try:
-        result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
-        print(f"Git pull completed with return code: {result.returncode}")
-        print(f"STDOUT:\n{result.stdout}")
-        print(f"STDERR:\n{result.stderr}")
+        # 打开 Git 仓库
+        repo = git.Repo(GIT_DIR)
+
+        # 拉取最新代码
+        pull_result = repo.remotes.origin.pull()
+
+        # 构造返回结果
+        messages = []
+        for info in pull_result:
+            messages.append(f"Updated branch: {info.ref.name}, updated to commit: {info.commit.hexsha}")
+
         return {
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-            "returncode": result.returncode,
-            "message": "Git pull completed successfully"
+            "message": "Git pull completed successfully",
+            "details": messages
         }
-    except subprocess.CalledProcessError as e:
-        print(f"Git pull failed with return code: {e.returncode}")
-        print(f"STDOUT:\n{e.stdout}")
-        print(f"STDERR:\n{e.stderr}")
+
+    except git.exc.GitCommandError as e:
         return {
-            "stdout": e.stdout,
-            "stderr": e.stderr,
-            "returncode": e.returncode,
-            "message": "Git pull failed"
+            "message": "Git pull failed",
+            "error": str(e)
         }
+
 
 @app.route('/execute', methods=['POST'])
 def execute_command():
@@ -157,6 +160,7 @@ def execute_command():
         error_message = f"Error occurred: {str(e)}"
         print(error_message)
         return jsonify({"error": error_message}), 500
+
 
 if __name__ == '__main__':
     print("Starting server on 0.0.0.0:8888...")

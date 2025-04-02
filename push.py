@@ -11,7 +11,7 @@ def run_command(command):
 
 def main():
     isProxy = True  # 这里可以设置为False不使用代理的
-    update_server = True  # 设置为True来更新服务器
+    update_server = False  # 设置为True来更新服务器
 
     if isProxy:
         run_command("gitproxy set")
