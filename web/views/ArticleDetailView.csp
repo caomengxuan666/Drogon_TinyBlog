@@ -24,10 +24,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
     <!-- 自定义样式 -->
     <style>
+    :root {
+        --primary: #2c3e50;
+        --accent: #4CAF50;
+        --surface: #f5f5f5;
+        --border: #eaeaea;
+        --text-color: #34495e;
+        /* 新增夜间模式下边框颜色变量 */
+        --border-dark: #404040;
+    }
+
+    body.dark-mode {
+        --surface: #1a1a1d;
+        --text-color: #e0e0e0;
+        --border: var(--border-dark); /* 使用变量控制边框颜色 */
+        --primary: #5d768c;
+        --accent: #66d9ba;
+        background-color: var(--surface);
+    }
+
+    body {
+        background-color: var(--surface);
+        color: var(--text-color);
+    }
+
+    .sidebar {
+        background: var(--surface); /* 确保使用变量 */
+        border-right: 1px solid var(--border); /* 动态边框颜色 */
+    }
+
+    .main-content {
+        background: var(--surface); /* 确保主内容区域使用变量 */
+        margin-left: 270px;
+        padding: 20px;
+    }
+
+    /* 其他样式统一使用变量 */
+    .tag { background: var(--accent); }
+    .search-bar { background: white; } /* 保留搜索栏白色背景 */
+    #top-bar { background: var(--surface); }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #34495e;
+            background-color: var(--surface); /* 修改此处使用变量 */
+            color: var(--text-color);
             margin: 0;
             padding: 0;
         }
@@ -45,8 +84,8 @@
             left: 0;
             width: 250px;
             height: calc(100vh - 60px);
-            background: white;
-            border-right: 1px solid #eaeaea;
+            background: var(--surface); /* 修改此处使用变量 */
+            border-right: 1px solid var(--border); /* 动态边框颜色 */
             overflow-y: auto;
             transition: transform 0.3s ease;
         }
@@ -80,7 +119,7 @@
         .main-content {
             margin-left: 270px;
             padding: 20px;
-            background: white;
+            background: var(--surface); /* 修改此处使用变量 */
             min-height: 100vh;
         }
 
@@ -99,7 +138,7 @@
         }
 
         .content-box {
-            background: white;
+            background: var(--surface); /* 修改此处使用变量 */
             padding: 20px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -153,8 +192,8 @@
             width: 250px;
             height: calc(100vh - 60px);
             overflow-y: auto;
-            background: #fff;
-            border-left: 1px solid #eaeaea;
+            background: var(--surface); /* 修改此处使用变量 */
+            border-left: 1px solid var(--border); /* 修改此处使用变量 */
         }
 
         .right-sidebar h4 {
@@ -179,15 +218,14 @@
 
         /* 搜索栏样式 */
         .search-bar {
+            background: var(--surface); /* 允许搜索栏跟随主题变化 */
             position: fixed;
             top: 0px;
             left:0%;
             display: flex;
             align-items: center;
-            background: white;
             padding: 8px 15px;
             border-radius: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .search-bar input {
@@ -222,7 +260,7 @@
             left: 0;
             right: 0;
             z-index: 1000; /* 确保在最上层 */
-            background: white;
+            background: var(--surface); /* 修改此处使用变量 */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 15px 30px;
             display: flex;
@@ -259,8 +297,10 @@
 <body style="margin-top: 60px;"> <!-- 增加顶部外边距以避免内容被遮挡 -->
     <!-- 新增返回主页按钮布局 -->
     <div id="top-bar">
-        <a href="/">
-            << 返回主页</a>
+        <a href="/">&lt;&lt; 返回主页</a>
+        <button id="theme-toggle" style="background:transparent;border:1px solid var(--border);color:var(--text-color);padding:8px 15px;border-radius:25px;transition:all 0.3s;margin-left:15px">
+            🌙 切换夜间模式
+        </button>
     </div>
 
     <!-- 移动搜索栏到左侧导航栏顶部 -->
@@ -507,6 +547,22 @@ document.addEventListener('DOMContentLoaded', () => {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
+
+    // 新增主题切换功能
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.textContent = '🌞 切换日间模式';
+    }
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        themeToggle.textContent = document.body.classList.contains('dark-mode') 
+            ? '🌞 切换日间模式' 
+            : '🌙 切换夜间模式';
+    });
 });
     </script>
 
