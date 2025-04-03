@@ -1,284 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TinyBlog 书写你的新博客</title>
+    <title>TinyBlog 编辑器</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
     <link href="https://unpkg.com/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lodash/lodash.min.js"></script>
     <style>
-        html,
-        body {
-            background-color: #fff;
-            height: 100%;
-            color: #333;
+        :root {
+            --primary: #2c3e50;
+            --accent: #42b983;
+            --surface: #f8f9fa;
+            --border: #e7e7e7;
         }
-        #top-container {
-            border-bottom: 1px solid #e8e8e8;
-            padding-left: 30px;
+
+        /* 顶部固定区域 */
+        #top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 30px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
-        #top-container a {
+
+        #top-bar a {
             color: #666;
             text-decoration: none;
-            font-weight: bold;
             padding: 8px 15px;
             border: 1px solid #ddd;
             border-radius: 25px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
-        #top-container a:hover {
-            background-color: #f8f8f8;
-            color: #333;
-            border-color: #ccc;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+        #save-button {
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        #editor-toolbar {
-            width: 1350px;
-            background-color: #FCFCFC;
-            margin: 0 auto;
+
+        /* 工具栏固定 */
+        #top-container {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: white;
+            padding: 10px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        /* 内容区域改为水平居中布局 */
-        #content {
-            display: flex; /* 新增：使用 flex 布局 */
-            align-items: flex-start; /* 新增：顶部对齐 */
-            gap: 30px; /* 新增：设置间距 */
+
+        /* 主布局 */
+        body {
+            margin-top: 120px;
+            padding: 0;
+            display: flex;
+            gap: 0;
+            height: calc(100vh - 120px);
+            width: 100vw;
+            overflow: hidden;
         }
+
+        /* 编辑器容器 */
         #editor-container {
-            margin: 30px auto 150px;
-            background-color: #fff;
-            padding: 20px 50px 50px 50px;
-            border: 1px solid #e8e8e8;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-            box-sizing: border-box;
-            width: 90%; 
-            overflow-y: auto; /* 新增：允许垂直滚动 */
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: 0 20px;
+            height: calc(100vh - 160px);
+            overflow-y: auto;
         }
+
+        /* 标题优化 */
         #title-container {
-            padding: 20px 0;
-            border-bottom: 1px solid #e8e8e8;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
         }
+
         #title-container input {
-            font-size: 30px;
-            border: 0;
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--primary);
+            border: none;
             outline: none;
             width: 100%;
-            line-height: 1;
+            padding: 5px 0;
+            transition: border 0.3s;
         }
-        #editor-text-area {
-            min-height: 900px;
-            margin-top: 20px;
+
+        #title-container input:focus {
+            border-bottom: 2px solid var(--accent);
         }
-        /* 侧边栏固定宽度 */
-        #header-container {
-            position: sticky;       /* 新增 */
-            top: 50%;              /* 新增 */
-            align-self: flex-start; /* 新增 */
-            transform: translateY(-50%); /* 新增 */
-            margin-left: auto;     /* 保持原有 */
-            width: 240px;          /* 保持原有 */
-            background-color: #f1f1f1;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        #header-container li {
-            color: #333;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        #header-container li:hover {
-            text-decoration: underline;
-        }
-        #header-container li[type="header1"] {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        #header-container li[type="header2"] {
+
+        /* 输入区域 */
+        #tag-input,
+        #description-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 15px 0;
             font-size: 16px;
-            padding-left: 15px;
-            font-weight: bold;
+            color: var(--primary);
+            border-bottom: 1px dashed var(--border);
+            transition: border 0.3s;
         }
-        #header-container li[type="header3"] {
-            font-size: 14px;
+
+        #tag-input:focus,
+        #description-input:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        /* 侧边目录 */
+        #header-container {
+            position: sticky;
+            top: 120px;
+            width: 280px;
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #header-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #header-container li {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 4px 0;
+        }
+
+        #header-container li:hover {
+            background: rgba(44, 62, 80, 0.1);
+            transform: translateX(8px);
+        }
+
+        /* 目录层级样式 */
+        li[type="header1"] {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        li[type="header2"] {
+            font-size: 1em;
+            padding-left: 15px;
+        }
+
+        li[type="header3"] {
+            font-size: 0.9em;
             padding-left: 30px;
         }
-        #header-container li[type="header4"] {
-            font-size: 12px;
-            padding-left: 45px;
+
+        /* 滚动高亮 */
+        .active-section {
+            font-weight: bold;
+            color: var(--accent);
         }
-        #header-container li[type="header5"] {
-            font-size: 12px;
-            padding-left: 60px;
+
+        /* 编辑器样式 */
+        #editor-text-area {
+            min-height: 600px;
+            margin-top: 20px;
+        }
+
+
+        /* 新增CSS样式 */
+        #editor-text-area [data-id] {
+            scroll-margin-top: 120px;
+            /* 与顶部固定区域高度匹配 */
+        }
+
+
+        /* 移除文章简介拖动功能 */
+        #description-input {
+            resize: none;
         }
     </style>
 </head>
+
 <body>
-    <div id="top-container">
-        <p>
-            <a href="/"><< 返回主页</a>
-        </p>
-        <!-- 新增保存按钮 -->
-        <button id="save-button" style="margin-left: 20px; padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            保存内容
-        </button>
+    <div id="top-bar">
+        <a href="/">
+            << 返回主页</a>
+                <button id="save-button">保存内容</button>
     </div>
-    <div style="border-bottom: 1px solid #e8e8e8;">
-        <div id="editor-toolbar"></div>
-    </div>
-    <div id="content">
-        <div id="editor-container">
-            <div id="title-container">
-                <input placeholder="Page title...">
-            </div>
-            <!-- 新增：标签和介绍输入区域 -->
-            <div style="padding: 20px 0; border-bottom: 1px solid #e8e8e8;">
-                <input id="tag-input" placeholder="Enter tags (comma separated)..." style="font-size: 16px; border: 0; outline: none; width: 100%; line-height: 1;">
-            </div>
-            <div style="padding: 20px 0; border-bottom: 1px solid #e8e8e8;">
-                <textarea id="description-input" placeholder="Enter a short description..." style="font-size: 16px; border: 0; outline: none; width: 100%; height: 80px; resize: none;"></textarea>
-            </div>
-            <div id="editor-text-area">
-            </div>
+
+    <div id="top-container"></div>
+
+    <div id="editor-container">
+        <div id="title-container">
+            <input placeholder="文章标题...">
         </div>
-        <div id="header-container"></div>
+        <input id="tag-input" placeholder="标签（逗号分隔）...">
+        <textarea id="description-input" placeholder="文章简介..."></textarea>
+        <div id="editor-text-area"></div>
     </div>
+
+    <div id="header-container"></div>
+
     <script src="https://unpkg.com/@wangeditor/editor@latest/dist/index.js"></script>
     <script>
         const E = window.wangEditor;
-
-        // 标题 DOM 容器
         const headerContainer = document.getElementById('header-container');
-        headerContainer.addEventListener('mousedown', event => {
-            if (event.target.tagName !== 'LI') return;
-            event.preventDefault();
-            const id = event.target.getAttribute('data-id');
-            const targetElement = document.querySelector(`[data-id="${id}"]`);
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
 
-        const editorConfig = {
-            placeholder: 'Type here...',
-            scroll: false, // 禁止编辑器滚动
-            MENU_CONF: {
-                uploadImage: {
-                    fieldName: 'your-fileName',
-                    base64LimitSize: 10 * 1024 * 1024 // 10M 以下插入 base64
-                }
-            },
-            onChange(editor) {
-                const headers = editor.getElemsByTypePrefix('header');
-                headerContainer.innerHTML = headers.map(header => {
-                    const text = E.SlateNode.string(header);
-                    const { id, type } = header;
-                    return `<li data-id="${id}" type="${type}">${text}</li>`;
-                }).join('');
-            }
-        };
-
-        // 先创建 editor
+        // 初始化编辑器
         const editor = E.createEditor({
             selector: '#editor-text-area',
-            content: [],
-            config: editorConfig
-        });
-
-        // 创建 toolbar
-        const toolbar = E.createToolbar({
-            editor,
-            selector: '#editor-toolbar',
             config: {
-                excludeKeys: 'fullScreen',
+                placeholder: '开始写作...',
+                MENU_CONF: {
+                    uploadImage: {
+                        fieldName: 'your-fileName',
+                        base64LimitSize: 10 * 1024 * 1024
+                    }
+                },
+                onChange: updateToc,
+                scroll: true
             }
         });
 
-        // 点击空白处 focus 编辑器
-        document.getElementById('editor-text-area').addEventListener('click', e => {
-            if (e.target.id === 'editor-text-area') {
-                editor.blur();
-                editor.focus(true); // focus 到末尾
-            }
+        E.createToolbar({
+            editor,
+            selector: '#top-container',
+            config: { excludeKeys: 'fullScreen' }
         });
 
-        // 页面加载时自动恢复内容（从 URL 参数中读取）
-        window.addEventListener('load', () => {
-            const params = new URLSearchParams(window.location.search);
-            const savedContent = params.get('content');
-            if (savedContent) {
-                editor.setHtml(decodeURIComponent(savedContent)); // 自动恢复内容
-            }
+        // 目录生成与跳转
+        function updateToc() {
+            const headers = editor.getElemsByTypePrefix('header');
+            let tocHtml = '<ul>';
+            let currentLevel = 1;
 
-            // 处理锚点跳转
-            const hash = window.location.hash;
-            if (hash) {
-                const targetElement = document.querySelector(hash);
+            headers.forEach(header => {
+                const level = parseInt(header.type.replace('header', ''));
+                const headerText = E.SlateNode.string(header);
+
+                if (level > currentLevel) {
+                    tocHtml += '<ul>';
+                } else if (level < currentLevel) {
+                    tocHtml += '</ul></li>'.repeat(currentLevel - level);
+                }
+
+                tocHtml += `<li data-id="${header.id}" type="${header.type}">${headerText}</li>`;
+                currentLevel = level;
+            });
+
+            tocHtml += '</ul>'.repeat(currentLevel - 1);
+            tocHtml += '</ul>';
+            headerContainer.innerHTML = tocHtml;
+        }
+
+        // 目录点击事件（修改后）
+        headerContainer.addEventListener('click', e => {
+            const targetLi = e.target.closest('li'); // 改用closest增强容错
+            if (targetLi) {
+                const id = targetLi.dataset.id; // 使用dataset属性更规范
+                const targetElement = document.querySelector(`#editor-text-area [data-id="${id}"]`);
+
                 if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // 使用scrollIntoView替代手动计算（更简洁可靠）
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start' // 对齐到顶部
+                    });
+
+                    // 通过CSS设置滚动偏移（替代硬编码offset）
+                    // 在CSS中添加：
+                    // #editor-text-area [data-id] {
+                    //     scroll-margin-top: 120px; /* 与顶部固定栏高度一致 */
+                    // }
                 }
             }
         });
 
-        // 滚动高亮逻辑
+        // 滚动高亮
         window.addEventListener('scroll', () => {
-            let currentSection = '';
-            const headings = document.querySelectorAll('#editor-text-area h1, #editor-text-area h2, #editor-text-area h3, #editor-text-area h4, #editor-text-area h5, #editor-text-area h6');
-            headings.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= 150 && rect.bottom >= 150) {
-                    currentSection = section.id;
+            const headings = document.querySelectorAll('#editor-text-area [data-id]');
+            let current = '';
+
+            headings.forEach(heading => {
+                const rect = heading.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.5) {
+                    current = heading.id;
                 }
             });
-            const tocLinks = document.querySelectorAll('#header-container li');
-            tocLinks.forEach(link => {
-                link.style.fontWeight = 'normal';
-                if (link.getAttribute('data-id') === currentSection) {
-                    link.style.fontWeight = 'bold';
-                }
+
+            document.querySelectorAll('#header-container li').forEach(li => {
+                li.classList.toggle('active-section', li.getAttribute('data-id') === current);
             });
         });
 
-        // 更新保存按钮点击事件逻辑
-        document.getElementById('save-button').addEventListener('click', async () => {
-            const title = document.querySelector('#title-container input').value; // 获取标题
-            const tag = document.getElementById('tag-input').value; // 获取标签
-            const description = document.getElementById('description-input').value; // 获取介绍
-            const content = editor.getHtml(); // 获取编辑器内容
-            if (!title || !content || !tag || !description) {
-                alert('标题、标签、介绍和内容均不能为空！');
-                return;
-            }
-            // 发送数据到后端
-            try {
-                const response = await fetch('/create/save', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        title: title,
-                        tag: tag, // 新增：标签字段
-                        description: description, // 新增：介绍字段
-                        content: content
-                    })
+        // 自动保存系统
+        const AUTO_SAVE_KEY = 'editor_autosave';
+        const saveDebounce = _.debounce(saveToLocal, 3000);
+
+        function saveToLocal() {
+            const state = {
+                title: document.querySelector('#title-container input').value,
+                tags: document.getElementById('tag-input').value,
+                description: document.getElementById('description-input').value,
+                content: editor.getHtml()
+            };
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(state));
+        }
+
+        function restoreFromLocal() {
+            const saved = localStorage.getItem(AUTO_SAVE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.entries({
+                    '#title-container input': 'title',
+                    '#tag-input': 'tags',
+                    '#description-input': 'description'
+                }).forEach(([selector, key]) => {
+                    document.querySelector(selector).value = data[key];
                 });
-                const result = await response.json();
-                if (result.status === 'success') {
-                    alert('文章保存成功！');
-                } else {
-                    alert('文章保存失败：' + result.message);
+                editor.setHtml(data.content);
+            }
+        }
+
+        // 初始化检查
+        window.addEventListener('load', () => {
+            if (confirm('检测到未保存的内容，是否恢复？')) {
+                restoreFromLocal();
+            }
+            editor.on('change', saveDebounce);
+            document.querySelectorAll('input, textarea').forEach(el =>
+                el.addEventListener('input', saveDebounce)
+            );
+        });
+
+        // 保存按钮逻辑
+        document.getElementById('save-button').addEventListener('click', async () => {
+            const title = document.querySelector('#title-container input').value;
+            const tag = document.getElementById('tag-input').value;
+            const description = document.getElementById('description-input').value;
+            const content = editor.getHtml();
+
+            if (!title || !content || !tag || !description) {
+                return alert('请填写所有字段');
+            }
+
+            try {
+                const res = await fetch('/create/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, tag, description, content })
+                });
+
+                if (res.ok) {
+                    localStorage.removeItem(AUTO_SAVE_KEY);
+                    alert('保存成功！');
                 }
-            } catch (error) {
-                console.error('保存失败：', error);
-                alert('保存失败，请稍后再试！');
+            } catch (e) {
+                alert('保存失败，请重试');
+            }
+        });
+        
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault(); // 阻止默认保存行为（如浏览器弹出保存对话框）
+                saveToLocal(); // 手动触发保存
+                alert('内容已保存！'); // 可选：提供用户反馈
             }
         });
     </script>
 </body>
+
 </html>

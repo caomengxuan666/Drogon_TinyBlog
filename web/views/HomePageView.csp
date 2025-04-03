@@ -11,9 +11,13 @@
         :root {
             --primary-color: #2c3e50;
             --accent-color: #42b983;
+            --secondary-color: #3498db;
             --card-bg: #ffffff;
-            --text-color: #34495e;
+            --text-color: #2c3e50;
+            --border-color: #e7e7e7;
+            --hover-color: #f8f9fa;
         }
+
 
         * {
             margin: 0;
@@ -40,11 +44,32 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* 导航栏优化 */
         .nav-links a {
+            position: relative;
             color: white;
             margin-left: 20px;
             text-decoration: none;
+            padding: 5px 0;
+            transition: color 0.3s;
         }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            bottom: -5px;
+            left: 50%;
+            transition: width 0.3s, left 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
 
         .hero-section {
             height: 400px;
@@ -57,22 +82,71 @@
             border-radius: 10px;
         }
 
+        /* 文章卡片优化 */
         .article-card {
             background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .article-card h3 a {
+            color: var(--primary-color);
+            transition: color 0.3s;
+        }
+
+        .article-card h3 a:hover {
+            color: var(--accent-color);
         }
 
         .article-card:hover {
             transform: translateY(-5px);
         }
-
-        .sidebar {
-            margin-top: 20px;
+        /* 侧边栏优化 */
+        .sidebar .widget {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
+
+        .sidebar h4 {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar h4::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 2px;
+            background: var(--accent-color);
+            bottom: 0;
+            left: 0;
+        }
+        .category-list a,
+        .hot-item a {
+            color: var(--text-color);
+            transition: all 0.3s;
+            display: inline-block;
+            padding: 5px 0;
+        }
+
+        .category-list a:hover,
+        .hot-item a:hover {
+            color: var(--accent-color);
+            transform: translateX(10px);
+        }
+
 
         .category-list {
             background: var(--card-bg);
@@ -104,21 +178,72 @@
             margin-top: 40px;
         }
 
+        /* 响应式优化 */
         @media (max-width: 768px) {
-            .hero-section {
-                height: 250px;
+            .nav-links {
+                margin-top: 15px;
+            }
+            
+            .article-card {
+                padding: 15px;
             }
         }
 
-        .meta span {
-        font-size: 0.9em;
-        color: #6c757d; /* 灰色 */
-        margin-right: 5px;
+        .meta {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
         }
+        .meta span {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .meta span:not(:last-child)::after {
+            content: '•';
+            margin: 0 8px;
+            color: #dee2e6;
+        }
+
         .meta span:hover {
             color: #007bff; /* 鼠标悬停时变蓝 */
             text-decoration: underline;
         }
+        .tags {
+            margin-top: 15px;
+        }
+
+        .tag {
+            background: #f1f1f1;
+            border-radius: 15px;
+            padding: 5px 12px;
+            margin: 5px;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* 按钮样式优化 */
+        .create-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            background: #3ac162;
+            box-shadow: 0 0 10px rgba(66, 185, 131, 0.5);
+        }
+
     </style>
 </head>
 <body>
@@ -129,7 +254,7 @@
                 <a href="/">首页</a>
                 <a href="/categories">分类</a>
                 <a href="/about">关于</a>
-                <a href="/create/2">创作</a> <!-- 添加创作按钮，默认用用户2发，后面改 -->
+                <a href="/create/2" class="create-btn">创作</a><!-- 添加创作按钮，默认用用户2发，后面改 -->
             </nav>
         </div>
     </header>
