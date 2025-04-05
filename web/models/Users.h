@@ -47,6 +47,8 @@ class Users
     {
         static const std::string _id;
         static const std::string _username;
+        static const std::string _role;
+        static const std::string _password;
     };
 
     static const int primaryKeyNumber;
@@ -116,8 +118,28 @@ class Users
     void setUsername(const std::string &pUsername) noexcept;
     void setUsername(std::string &&pUsername) noexcept;
 
+    /**  For column role  */
+    ///Get the value of the column role, returns the default value if the column is null
+    const std::string &getValueOfRole() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getRole() const noexcept;
+    ///Set the value of the column role
+    void setRole(const std::string &pRole) noexcept;
+    void setRole(std::string &&pRole) noexcept;
+    void setRoleToNull() noexcept;
 
-    static size_t getColumnNumber() noexcept {  return 2;  }
+    /**  For column password  */
+    ///Get the value of the column password, returns the default value if the column is null
+    const std::string &getValueOfPassword() const noexcept;
+    ///Return a shared_ptr object pointing to the column const value, or an empty shared_ptr object if the column is null
+    const std::shared_ptr<std::string> &getPassword() const noexcept;
+    ///Set the value of the column password
+    void setPassword(const std::string &pPassword) noexcept;
+    void setPassword(std::string &&pPassword) noexcept;
+    void setPasswordToNull() noexcept;
+
+
+    static size_t getColumnNumber() noexcept {  return 4;  }
     static const std::string &getColumnName(size_t index) noexcept(false);
 
     Json::Value toJson() const;
@@ -144,6 +166,8 @@ class Users
     void updateId(const uint64_t id);
     std::shared_ptr<int64_t> id_;
     std::shared_ptr<std::string> username_;
+    std::shared_ptr<std::string> role_;
+    std::shared_ptr<std::string> password_;
     struct MetaData
     {
         const std::string colName_;
@@ -155,7 +179,7 @@ class Users
         const bool notNull_;
     };
     static const std::vector<MetaData> metaData_;
-    bool dirtyFlag_[2]={ false };
+    bool dirtyFlag_[4]={ false };
   public:
     static const std::string &sqlForFindingByPrimaryKey()
     {
@@ -178,6 +202,24 @@ class Users
             sql += "username,";
             ++parametersCount;
         }
+        if(dirtyFlag_[2])
+        {
+            sql += "role,";
+            ++parametersCount;
+        }
+        if(!dirtyFlag_[2])
+        {
+            needSelection=true;
+        }
+        if(dirtyFlag_[3])
+        {
+            sql += "password,";
+            ++parametersCount;
+        }
+        if(!dirtyFlag_[3])
+        {
+            needSelection=true;
+        }
         if(parametersCount > 0)
         {
             sql[sql.length()-1]=')';
@@ -187,6 +229,16 @@ class Users
             sql += ") values (";
 
         if(dirtyFlag_[1])
+        {
+            sql.append("?,");
+
+        }
+        if(dirtyFlag_[2])
+        {
+            sql.append("?,");
+
+        }
+        if(dirtyFlag_[3])
         {
             sql.append("?,");
 

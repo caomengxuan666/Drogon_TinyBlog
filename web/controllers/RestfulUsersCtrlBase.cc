@@ -424,7 +424,9 @@ void RestfulUsersCtrlBase::update(const HttpRequestPtr &req,
 RestfulUsersCtrlBase::RestfulUsersCtrlBase()
     : RestfulController({
           "id",
-          "username"
+          "username",
+          "role",
+          "password"
       })
 {
    /**
@@ -434,6 +436,8 @@ RestfulUsersCtrlBase::RestfulUsersCtrlBase()
     */
     enableMasquerading({
         "id", // the alias for the id column.
-        "username"  // the alias for the username column.
+        "username", // the alias for the username column.
+        "role", // the alias for the role column.
+        "password"  // the alias for the password column.
     });
 }

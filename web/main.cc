@@ -16,10 +16,10 @@ static void cacheArticles() {
     // 打印当地时间
     auto now = std::chrono::system_clock::now();
     auto now_c = std::chrono::system_clock::to_time_t(now);
-    std::tm* now_tm = std::localtime(&now_c);
+    std::tm *now_tm = std::localtime(&now_c);
     char buf[100];
     std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", now_tm);
-    LOG_INFO<< "Cache articles at " << buf;
+    LOG_INFO << "Cache articles at " << buf;
 }
 
 

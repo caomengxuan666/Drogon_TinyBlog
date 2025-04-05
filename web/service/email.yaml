@@ -1,0 +1,6 @@
+email-server:
+  server: smtp.163.com
+  port: 465
+  sender:
+    address: 18096493334@163.com
+    password: LNqhjfzsrjpqziRe

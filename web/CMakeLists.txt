@@ -1,3 +1,6 @@
+if(POLICY CMP0148)
+    cmake_policy(SET CMP0148 NEW)
+endif()
 cmake_minimum_required(VERSION 3.12)
 project(web CXX)
 
@@ -20,9 +23,18 @@ endif ()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+add_subdirectory(service)
 # 将view/static 和view/templates复制到构建目录
 file(COPY views/static DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/views)
 file(COPY views/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/views)
+# 拷贝python
+# 拷贝python文件夹下的所有.py文件
+file(GLOB PYTHON_FILES "service/python/*.py")
+file(COPY ${PYTHON_FILES} DESTINATION ${CMAKE_BINARY_DIR})
+
+file(GLOB PYTHON_FILES "service/*.yaml")
+file(COPY ${PYTHON_FILES} DESTINATION ${CMAKE_BINARY_DIR})
+
 
 add_executable(${PROJECT_NAME} main.cc)
 
@@ -34,7 +46,9 @@ add_executable(${PROJECT_NAME} main.cc)
 #
 # and comment out the following lines
 find_package(Drogon CONFIG REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon)
+
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon email_wrapper QRCodeGenerator)
 
 # ##############################################################################
 
@@ -50,6 +64,7 @@ aux_source_directory(controllers CTL_SRC)
 aux_source_directory(filters FILTER_SRC)
 aux_source_directory(plugins PLUGIN_SRC)
 aux_source_directory(models MODEL_SRC)
+aux_source_directory(service SERVICE_SRC)
 
 drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
                     ${CMAKE_CURRENT_BINARY_DIR})
@@ -70,7 +85,9 @@ target_sources(${PROJECT_NAME}
                ${CTL_SRC}
                ${FILTER_SRC}
                ${PLUGIN_SRC}
-               ${MODEL_SRC})
+               ${MODEL_SRC}
+               ${SERVICE_SRC}
+               )
 # ##############################################################################
 # uncomment the following line for dynamically loading views 
 # set_property(TARGET ${PROJECT_NAME} PROPERTY ENABLE_EXPORTS ON)
@@ -78,3 +95,5 @@ target_sources(${PROJECT_NAME}
 # ##############################################################################
 
 add_subdirectory(test)
+
+add_subdirectory(example)
