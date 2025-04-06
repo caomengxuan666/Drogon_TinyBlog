@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档中心 - 首页</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #42b983;
+            --secondary-color: #3498db;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #e7e7e7;
+            --hover-color: #f8f9fa;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-links a {
+            position: relative;
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            padding: 5px 0;
+            transition: color 0.3s;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            bottom: -5px;
+            left: 50%;
+            transition: width 0.3s, left 0.3s;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .hero-section {
+            height: 300px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+        .doc-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .doc-card h3 a {
+            color: var(--primary-color);
+            transition: color 0.3s;
+        }
+        .doc-card h3 a:hover {
+            color: var(--accent-color);
+        }
+        .pagination {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            margin-top: 40px;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                margin-top: 15px;
+            }
+            .doc-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>文档中心</h1>
+            <nav class="nav-links">
+                <a href="/">首页</a>
+                <a href="/categories">分类</a>
+                <a href="/about">关于</a>
+                <a href="/create/2" class="create-btn">创作</a><!-- 添加创作按钮，默认用用户2发，后面改 -->
+                <a href="/static/index.html">代码文档</a>
+            </nav>
+        </div>
+    </header>
+    <div class="hero-section">
+        <div class="container">
+            <h2>欢迎来到文档中心</h2>
+            <p>专注于高质量技术文档分享</p>
+        </div>
+    </div>
+    <div class="container">
+        <section class="docs">
+            <h2>文档列表</h2>
+            <div class="doc-card">
+                <h3><a href="./drogon_docs/index.html">Drogon 框架文档</a></h3>
+                <p>全面介绍 Drogon 框架的核心功能、使用方法和最佳实践。</p>
+            </div>
+            <div class="doc-card">
+                <h3><a href="./cpp_docs/index.html">C++ 标准库文档</a></h3>
+                <p>涵盖 C++ 标准库的详细说明和代码示例。</p>
+            </div>
+            <div class="doc-card">
+                <h3><a href="./javascript_docs/index.html">JavaScript 文档</a></h3>
+                <p>学习 JavaScript 的基础知识和高级特性。</p>
+            </div>
+            <div class="doc-card">
+                <h3><a href="./python_docs/index.html">Python 文档</a></h3>
+                <p>Python 编程语言的官方文档和教程。</p>
+            </div>
+        </section>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 文档中心 版权所有</p>
+            <p>Powered by Drogon Framework</p>  
+        </div>
+    </footer>
+</body>
+</html>

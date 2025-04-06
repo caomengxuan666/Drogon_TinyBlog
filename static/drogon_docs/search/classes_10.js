@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['saferatelimiter_0',['SafeRateLimiter',['../classdrogon_1_1_safe_rate_limiter.html',1,'drogon']]],
+  ['safestringhash_1',['SafeStringHash',['../structdrogon_1_1utils_1_1internal_1_1_safe_string_hash.html',1,'drogon::utils::internal']]],
+  ['sample_2',['Sample',['../structdrogon_1_1monitoring_1_1_sample.html',1,'drogon::monitoring']]],
+  ['samplesgroup_3',['SamplesGroup',['../structdrogon_1_1monitoring_1_1_samples_group.html',1,'drogon::monitoring']]],
+  ['securesslredirector_4',['SecureSSLRedirector',['../classdrogon_1_1plugin_1_1_secure_s_s_l_redirector.html',1,'drogon::plugin']]],
+  ['serializationfailure_5',['SerializationFailure',['../classdrogon_1_1orm_1_1_serialization_failure.html',1,'drogon::orm']]],
+  ['session_6',['Session',['../classdrogon_1_1_session.html',1,'drogon']]],
+  ['slashremover_7',['SlashRemover',['../classdrogon_1_1plugin_1_1_slash_remover.html',1,'drogon::plugin']]],
+  ['sqlbinder_8',['SqlBinder',['../classdrogon_1_1orm_1_1internal_1_1_sql_binder.html',1,'drogon::orm::internal']]],
+  ['sqlerror_9',['SqlError',['../classdrogon_1_1orm_1_1_sql_error.html',1,'drogon::orm']]],
+  ['sqlite3config_10',['Sqlite3Config',['../structdrogon_1_1orm_1_1_sqlite3_config.html',1,'drogon::orm']]],
+  ['statementcompletionunknown_11',['StatementCompletionUnknown',['../classdrogon_1_1orm_1_1_statement_completion_unknown.html',1,'drogon::orm']]],
+  ['stopwatch_12',['StopWatch',['../classdrogon_1_1_stop_watch.html',1,'drogon']]],
+  ['streamerror_13',['StreamError',['../classdrogon_1_1_stream_error.html',1,'drogon']]],
+  ['switchthreadawaiter_14',['SwitchThreadAwaiter',['../structdrogon_1_1internal_1_1_switch_thread_awaiter.html',1,'drogon::internal']]],
+  ['syntaxerror_15',['SyntaxError',['../classdrogon_1_1orm_1_1_syntax_error.html',1,'drogon::orm']]]
+];

@@ -8,9 +8,10 @@ int muilti_process_generate_qrcode() {
         for (int i = 0; i < 10; ++i) {
             std::string data = "https://example.com/" + std::to_string(i);
             std::string save_path = "code_images";
+            std::string file_name = "qr_code_" + std::to_string(i) + ".png";
 
-            std::string file_path = generator.generate_qr_code(data, save_path, 3, 15, 2);
-            std::cout << "QR code saved to: " << file_path;
+            std::string file_path = generator.generate_qr_code_with_filename(data, save_path, file_name, 3, 15, 2);
+            std::cout << "QR code saved to: " << file_path << std::endl;
         }
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
@@ -22,7 +23,11 @@ int muilti_process_generate_qrcode() {
 int single_process_example() {
     try {
         QRCodeMultiProcessGenerator generator(1);
-        generator.generate_qr_code("https://github.com/caomengxuan666", "github_page", 3, 15, 2);
+        std::string save_path = "code_images";
+        std::string file_name = "github_page.png";
+
+        std::string file_path = generator.generate_qr_code_with_filename("https://github.com/caomengxuan666", save_path, file_name, 3, 15, 2);
+        std::cout << "QR code saved to: " << file_path << std::endl;
     } catch (const std::exception &e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return -1;
@@ -32,14 +37,11 @@ int single_process_example() {
 
 void single_code() {
     QRCodeGenerator qr_gen;
-    std::string data = "https://www.baidu.com/";
-    qr_gen.generate_qr_code(
-            "code_images",// 保存路径
-            data,         // 数据内容
-            3,            // 版本
-            15,           // 模块大小
-            2             // 边框宽度
-    );
+    std::string data = "http://47.120.50.122:5000";
+    std::string save_path = "code_images";
+    std::string file_name = "single_code.png";
+
+    qr_gen.generate_qr_code_with_filename(save_path, file_name, data, 3, 15, 2);
 }
 
 int main() {

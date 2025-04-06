@@ -28,6 +28,10 @@ public:
     std::string generate_qr_code(const std::string &data, const std::string &save_path,
                                  int version, int box_size, int border);
 
+    // 分配任务并生成 QR 码，指定文件名
+    std::string generate_qr_code_with_filename(const std::string &data, const std::string &save_path, const std::string &file_name,
+                                               int version, int box_size, int border);
+
 private:
 #ifdef _WIN32
     std::vector<HANDLE> processes; // Windows 子进程句柄
@@ -138,15 +142,13 @@ inline void QRCodeMultiProcessGenerator::start_process() {
 
             // 解析任务参数
             std::istringstream iss(task);
-            std::string data, save_path;
+            std::string data, save_path, file_name;
             int version, box_size, border;
-            iss >> data >> save_path >> version >> box_size >> border;
+            iss >> data >> save_path >> file_name >> version >> box_size >> border;
 
             // 生成 QR 码
             QRCodeGenerator qr_gen;
-            std::ostringstream oss;
-            oss << save_path << "/qr_" << time(nullptr) << ".png";
-            std::string file_path = oss.str();
+            std::string file_path = save_path + "/" + file_name;
 
             qr_gen.generate_qr_code(save_path, data, version, box_size, border);
 
@@ -187,6 +189,51 @@ inline std::string QRCodeMultiProcessGenerator::generate_qr_code(const std::stri
     // 构造任务字符串
     std::ostringstream task_stream;
     task_stream << data << " " << save_path << " " << version << " " << box_size << " " << border << "\n";
+    std::string task = task_stream.str();
+
+#ifdef _WIN32
+    // 向子进程发送任务
+    DWORD bytes_written;
+    WriteFile(write_handles[process_index], task.c_str(), task.size(), &bytes_written, NULL);
+
+    // 从子进程读取结果
+    char buffer[1024];
+    DWORD bytes_read;
+    ReadFile(read_handles[process_index], buffer, sizeof(buffer) - 1, &bytes_read, NULL);
+    buffer[bytes_read] = '\0';
+    std::string result(buffer);
+#else
+    // 向子进程发送任务
+    write(write_fds[process_index], task.c_str(), task.size());
+
+    // 从子进程读取结果
+    char buffer[1024];
+    ssize_t bytes_read = read(read_fds[process_index], buffer, sizeof(buffer) - 1);
+    buffer[bytes_read] = '\0';
+    std::string result(buffer);
+#endif
+
+    lock.lock();
+    available_processes.push(process_index); // 释放子进程回池
+    pool_cv.notify_one();
+    lock.unlock();
+
+    return result;
+}
+
+inline std::string QRCodeMultiProcessGenerator::generate_qr_code_with_filename(const std::string &data, const std::string &save_path, const std::string &file_name,
+                                                                               int version, int box_size, int border) {
+    std::unique_lock<std::mutex> lock(pool_mutex);
+    pool_cv.wait(lock, [this]() { return !available_processes.empty(); });
+
+    int process_index = available_processes.front();
+    available_processes.pop();
+
+    lock.unlock();
+
+    // 构造任务字符串
+    std::ostringstream task_stream;
+    task_stream << data << " " << save_path << " " << file_name << " " << version << " " << box_size << " " << border << "\n";
     std::string task = task_stream.str();
 
 #ifdef _WIN32

@@ -1,6 +1,6 @@
 /* This is a JSON format configuration file
  */
-{
+ {
     "ssl": {
         "cert": "../../trantor/trantor/tests/server.crt",
         "key": "../../trantor/trantor/tests/server.key"
@@ -21,13 +21,13 @@
         }
     ],
     "app": {
-        "number_of_threads": 2,
+        "number_of_threads": 16,
         "enable_session": false,
         "session_timeout": 0,
         "session_same_site": "Null",
         "session_cookie_key": "JSESSIONID",
         "session_max_age": -1,
-        "document_root": "./",
+        "document_root": "./static",
         "home_page": "index.html",
         "use_implicit_page": true,
         "implicit_page": "index.html",
@@ -52,7 +52,7 @@
         "locations": [
             {
                 "default_content_type": "text/plain",
-                "alias": "",
+                "alias": "/static/",
                 "is_case_sensitive": false,
                 "allow_all": true,
                 "is_recursive": true,

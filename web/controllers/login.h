@@ -13,7 +13,9 @@ public:
     // ADD_METHOD_TO(login::your_method_name, "/absolute/path/{1}/{2}/list", Get); // path is /absolute/path/{arg1}/{arg2}/list
     ADD_METHOD_TO(login::LoginPage, "/login", Get);
     ADD_METHOD_TO(login::handleLogin, "/login", Post);
-    
+
+    METHOD_ADD(login::redirectVerify, "/token?UserID={1}&password={2}", Get);
+
     ADD_METHOD_TO(login::RegisPage, "/regis", Get);
     ADD_METHOD_TO(login::handleRegis, "/regis", Post);
     METHOD_LIST_END
@@ -28,4 +30,13 @@ public:
                    std::function<void(const HttpResponsePtr &)> &&callback);
     void handleRegis(const HttpRequestPtr &req,
                      std::function<void(const HttpResponsePtr &)> &&callback);
+
+    void generateQRCode(const HttpRequestPtr &req,
+                        std::function<void(const HttpResponsePtr &)> &&callback,int userID);
+
+    void generateVerifyToken(const HttpRequestPtr &req,
+                             std::function<void(const HttpResponsePtr &)> &&callback);
+
+    void redirectVerify(const HttpRequestPtr &req,
+                        std::function<void(const HttpResponsePtr &)> &&callback,int userID,std::string password);
 };

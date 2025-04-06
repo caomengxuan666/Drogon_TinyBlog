@@ -255,6 +255,7 @@
                 <a href="/categories">分类</a>
                 <a href="/about">关于</a>
                 <a href="/create/2" class="create-btn">创作</a><!-- 添加创作按钮，默认用用户2发，后面改 -->
+                <a href="/static/index.html">代码文档</a>
             </nav>
         </div>
     </header>
