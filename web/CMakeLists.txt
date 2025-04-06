@@ -32,7 +32,7 @@ file(COPY views/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/views)
 
 # 拷贝static文件夹
 file(COPY ../static DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/static)
-
+file(COPY ../static/index.html DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/static)
 
 # 拷贝python 拷贝python文件夹下的所有.py文件
 file(GLOB PYTHON_FILES "service/python/*.py")
