@@ -244,7 +244,75 @@
             box-shadow: 0 0 10px rgba(66, 185, 131, 0.5);
         }
 
-    </style>
+        /* 新增用户信息样式 */
+        .nav-links .user-profile {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            gap: 10px;
+        }
+
+        .nav-links .user-profile .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .nav-links .login-btn {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links .login-btn:hover {
+            color: var(--accent-color);
+        }
+
+        // 确保导航栏使用flex布局
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* 新增右上角登录按钮样式 */
+        .login-container {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+
+        .login-container .login-btn {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-container .login-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .user-profile-container {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile-container .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-profile-container .username {
+            color: white;
+        }    </style>
 </head>
 <body>
     <header class="header">
@@ -254,9 +322,24 @@
                 <a href="/">首页</a>
                 <a href="/categories">分类</a>
                 <a href="/about">关于</a>
-                <a href="/create/2" class="create-btn">创作</a><!-- 添加创作按钮，默认用用户2发，后面改 -->
+                <a href="/create/1" class="create-btn">创作</a>
                 <a href="/static/index.html">代码文档</a>
             </nav>
+            <%c++ 
+            const bool isLoggedIn = @@.get<bool>("isLoggedIn");
+            const std::string userNickname = @@.get<std::string>("username");
+            const std::string userAvatar = @@.get<std::string>("userAvatar");
+            %>
+            <%c++ if (isLoggedIn) { %>
+                <div class="user-profile-container">
+                    <img src=[[userAvatar]] alt="头像" class="avatar">
+                    <span class="username">[[username]]</span>
+                </div>
+            <%c++ } else { %>
+                <div class="login-container">
+                    <a href="/login" class="login-btn">登录</a>
+                </div>
+            <%c++ } %>
         </div>
     </header>
 

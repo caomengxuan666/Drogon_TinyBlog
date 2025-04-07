@@ -92,32 +92,54 @@ void IndexCtrl::asyncHandleHttpRequest(
 
     // 插入处理后的数据
     data.insert("articles", articlesWithAuthorsAndDates);
-    
-    
+
+
     // 分类数据处理（保持原有逻辑）
     std::map<std::string, std::string> strCategories;
     for (const auto &[cat, count]: std::map<std::string, size_t>{{"技术", 2}, {"生活", 1}}) {
         strCategories[cat] = drogon::utils::formattedString("%zu", count);
     }
     data.insert("categories", strCategories);
-        // 热门文章处理（保持原有逻辑）
-        std::vector<Articles> hot_articles = articles;
-        for (auto &article: hot_articles) {
-            article.setId(article.getValueOfId());
+    // 热门文章处理（保持原有逻辑）
+    std::vector<Articles> hot_articles = articles;
+    for (auto &article: hot_articles) {
+        article.setId(article.getValueOfId());
+    }
+    data.insert("hot_articles", hot_articles);
+
+    // 标签处理（保持原有逻辑）
+    std::set<std::string> tagsSet;
+    for (const auto &article: articles) {
+        std::istringstream iss(article.getValueOfTag());
+        std::string tag;
+        while (std::getline(iss, tag, ',')) {
+            tagsSet.insert(tag);
         }
-        data.insert("hot_articles", hot_articles);
-    
-        // 标签处理（保持原有逻辑）
-        std::set<std::string> tagsSet;
-        for (const auto &article: articles) {
-            std::istringstream iss(article.getValueOfTag());
-            std::string tag;
-            while (std::getline(iss, tag, ',')) {
-                tagsSet.insert(tag);
-            }
-        }
-        std::vector<std::string> tags(tagsSet.begin(), tagsSet.end());
-        data.insert("tags", tags);
+    }
+    std::vector<std::string> tags(tagsSet.begin(), tagsSet.end());
+    data.insert("tags", tags);
+
+
+    auto session = req->getSession();
+    // 检查 session 中是否存在 user_id
+    auto userIdOpt = session->getOptional<long>("user_id");
+    bool isLoggedIn = userIdOpt.has_value();
+    LOG_INFO << "isLoggedIn: " << isLoggedIn;
+
+    auto userNameOpt = session->getOptional<std::string>("username");
+
+    // 获取用户昵称，默认值为 "游客"
+    auto username = userNameOpt.has_value() ? userNameOpt.value() : "游客";
+
+    auto userAvatarOpt = session->getOptional<std::string>("userAvatar");
+
+    auto userAvatar = userAvatarOpt.has_value() ? userAvatarOpt.value() : "/static/images/default_avatar.png";
+
+    // 将值插入视图数据
+    data.insert("isLoggedIn", isLoggedIn);
+    data.insert("username", username);
+    data.insert("userAvatar", userAvatar);
+
     auto resp = HttpResponse::newHttpViewResponse("HomePageView", data);
     callback(resp);
 }

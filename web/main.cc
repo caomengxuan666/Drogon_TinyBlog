@@ -6,7 +6,7 @@ using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::sqlite3;
 
-// 缓存函数
+// 缓存函数，这里只取Articles放到首页，因为可能会产生数据库冲突所以我必须这么设计
 static void cacheArticles() {
     auto clientPtr = drogon::app().getDbClient("default");
     Mapper<Articles> mapper(clientPtr);

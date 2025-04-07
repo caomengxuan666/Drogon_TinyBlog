@@ -22,7 +22,7 @@
     ],
     "app": {
         "number_of_threads": 16,
-        "enable_session": false,
+        "enable_session": true,
         "session_timeout": 0,
         "session_same_site": "Null",
         "session_cookie_key": "JSESSIONID",

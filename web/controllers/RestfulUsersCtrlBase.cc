@@ -426,7 +426,10 @@ RestfulUsersCtrlBase::RestfulUsersCtrlBase()
           "id",
           "username",
           "role",
-          "password"
+          "password",
+          "email",
+          "password_hash",
+          "created_at"
       })
 {
    /**
@@ -438,6 +441,9 @@ RestfulUsersCtrlBase::RestfulUsersCtrlBase()
         "id", // the alias for the id column.
         "username", // the alias for the username column.
         "role", // the alias for the role column.
-        "password"  // the alias for the password column.
+        "password", // the alias for the password column.
+        "email", // the alias for the email column.
+        "password_hash", // the alias for the password_hash column.
+        "created_at"  // the alias for the created_at column.
     });
 }

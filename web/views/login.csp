@@ -159,14 +159,10 @@
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-<!--css file-->
-<link rel="stylesheet" href="styles.css" />
-</head>
-
 <body>
 
     <div class="wrapper">
-        <form action="#">
+        <form id="loginForm"> <!-- 添加表单ID -->
             <h1>Login</h1>
             <div class="input-box">
                 <i class="fas fa-envelope icon"></i>
@@ -180,13 +176,10 @@
             </div>
 
             <div class="row">
-
-
                 <a onclick="forgotman()">Forgot password?</a>
             </div>
 
-            <button onclick="loginBrungle()" class="btn">Login</button>
-
+            <button type="submit" class="btn">Login</button>
             <div class="signup-link">
                 <p>Don't have an account? <a href="regis">Create one.</a></p>
             </div>
@@ -200,27 +193,27 @@
         alert('Please email ssnigdhasiraz22@sirhenryfloyd.co.uk to request a password reset');
     }
 
-    // user passwords and stuff
-
-
-    // Admin
-    const adminUser = "Admin";
-    const adminPass = "Pass"
-
-    function loginBrungle(event) {
+    // 获取表单元素并绑定事件监听器
+    document.querySelector('form').addEventListener('submit', function (event) { // 临时方案：直接通过表单选择器绑定
         event.preventDefault(); // 阻止表单默认提交行为
 
         // 获取输入框中的用户名和密码
-        const username = document.querySelector('#usernameInput').value;
-        const password = document.querySelector('#passwordInput').value;
+        const username = document.querySelector('#usernameInput').value.trim();
+        const password = document.querySelector('#passwordInput').value.trim();
+
+        // 表单验证
+        if (!username || !password) {
+            alert('Username and password cannot be empty');
+            return;
+        }
 
         // 构造 POST 请求
         fetch('/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // 设置请求头为 JSON 格式
+                'Content-Type': 'application/x-www-form-urlencoded' // 修改为表单格式
             },
-            body: JSON.stringify({
+            body: new URLSearchParams({
                 userId: username,
                 password: password
             })
@@ -243,5 +236,5 @@
             console.error('Error:', error);
             alert('An error occurred. Please try again.');
         });
-}
+    });
 </script>

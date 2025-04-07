@@ -14,8 +14,6 @@ public:
     ADD_METHOD_TO(login::LoginPage, "/login", Get);
     ADD_METHOD_TO(login::handleLogin, "/login", Post);
 
-    METHOD_ADD(login::redirectVerify, "/token?UserID={1}&password={2}", Get);
-
     ADD_METHOD_TO(login::RegisPage, "/regis", Get);
     ADD_METHOD_TO(login::handleRegis, "/regis", Post);
     METHOD_LIST_END
@@ -37,6 +35,4 @@ public:
     void generateVerifyToken(const HttpRequestPtr &req,
                              std::function<void(const HttpResponsePtr &)> &&callback);
 
-    void redirectVerify(const HttpRequestPtr &req,
-                        std::function<void(const HttpResponsePtr &)> &&callback,int userID,std::string password);
 };
