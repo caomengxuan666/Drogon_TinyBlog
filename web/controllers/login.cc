@@ -1,5 +1,6 @@
 #include "login.h"
 #include "../models/Users.h"// 引入 Users 模型
+#include "../service/urlencode.h"
 #include "Utility/consts.hpp"
 #include <Utility/uuid.hpp>
 #include <cstdint>
@@ -24,6 +25,7 @@ void login::LoginPage(const HttpRequestPtr &req,
 }
 
 // 处理登录请求
+//todo 应该重定向回用户原始请求的URL，而不是全部重定向到/
 void login::handleLogin(const HttpRequestPtr &req,
                         std::function<void(const HttpResponsePtr &)> &&callback) {
     LOG_DEBUG << "Handling login request";
@@ -209,10 +211,7 @@ void login::generateQRCode(const HttpRequestPtr &req,
     std::string baseName = "./LoginQRCode/qrcode.png";
 
     auto RCodeName = UUID::generate(16 - countDigits(userID));// 生成唯一名称
-    QRCodeGenerator qrCodeGenerator;
-    const std::string login_url = base_url + "login/";
-    qrCodeGenerator.generate_qr_code_with_filename(
-            "./LoginQRCode", RCodeName, login_url + std::to_string(userID), 1, 1, 1);
+    UrlEncode2QRCode(baseName, RCodeName, base_url + "login/" + std::to_string(userID));
 
     // 返回二维码文件路径
     Json::Value ret;

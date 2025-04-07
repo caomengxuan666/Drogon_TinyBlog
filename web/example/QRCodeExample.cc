@@ -1,5 +1,5 @@
+#include "../service/urlencode.h"
 #include "qrcodepool.h"
-
 int muilti_process_generate_qrcode() {
     try {
         QRCodeMultiProcessGenerator generator(4);// 初始化进程池，大小为 4
@@ -44,8 +44,16 @@ void single_code() {
     qr_gen.generate_qr_code_with_filename(save_path, file_name, data, 3, 15, 2);
 }
 
+void generateQRcodeWithFunc() {
+    std::string filepath = "code_images";
+    std::string filename = "UrlEncode.png";
+    std::string url_data = "https://47.120.50.122/";
+    UrlEncode2QRCode(filepath, filename, url_data);
+}
+
 int main() {
-    single_process_example();
-    single_code();
+    //single_process_example();
+    //single_code();
+    generateQRcodeWithFunc();
     return 0;
 }

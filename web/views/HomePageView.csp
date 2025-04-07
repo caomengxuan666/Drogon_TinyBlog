@@ -10,7 +10,7 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --accent-color: #42b983;
+            --accent-color: #42b983; 
             --secondary-color: #3498db;
             --card-bg: #ffffff;
             --text-color: #2c3e50;
@@ -324,6 +324,7 @@
                 <a href="/about">关于</a>
                 <a href="/create/1" class="create-btn">创作</a>
                 <a href="/static/index.html">代码文档</a>
+                <a href="/backstage">后台管理</a>
             </nav>
             <%c++ 
             const bool isLoggedIn = @@.get<bool>("isLoggedIn");
