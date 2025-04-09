@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include <iostream>
+#include <mutex> // 用于线程安全
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <sstream>
@@ -27,16 +28,49 @@ public:
     explicit EmailException(const std::string &message) : std::runtime_error(message) {}
 };
 
-// 全局管理 Python 解释器的初始化和销毁
+// 全局管理 Python 解释器的初始化和销毁（单例模式 + 线程安全）
 class PyInterpreterManager {
 public:
-    PyInterpreterManager() {
-        py::initialize_interpreter();
+    // 获取单例实例
+    static PyInterpreterManager& getInstance() {
+        static PyInterpreterManager instance;
+        return instance;
     }
 
-    ~PyInterpreterManager() {
-        py::finalize_interpreter();
+    // 初始化 Python 解释器
+    void initialize() {
+        std::lock_guard<std::mutex> lock(mutex_); // 确保线程安全
+        if (!initialized_) {
+            try {
+                py::initialize_interpreter();
+                initialized_ = true;
+                std::cout << "Python interpreter initialized successfully!" << std::endl;
+            } catch (const std::exception &e) {
+                throw EmailException("Failed to initialize Python interpreter: " + std::string(e.what()));
+            }
+        }
     }
+
+    // 销毁 Python 解释器
+    void finalize() {
+        std::lock_guard<std::mutex> lock(mutex_); // 确保线程安全
+        if (initialized_) {
+            try {
+                py::finalize_interpreter();
+                initialized_ = false;
+                std::cout << "Python interpreter finalized successfully!" << std::endl;
+            } catch (const std::exception &e) {
+                throw EmailException("Failed to finalize Python interpreter: " + std::string(e.what()));
+            }
+        }
+    }
+
+private:
+    PyInterpreterManager() : initialized_(false) {} // 私有构造函数
+    ~PyInterpreterManager() { finalize(); }       // 析构函数确保清理资源
+
+    bool initialized_; // 是否已初始化
+    std::mutex mutex_; // 互斥锁，用于线程安全
 };
 
 // 获取可执行文件所在目录（跨平台实现）
@@ -81,6 +115,9 @@ public:
      */
     EmailWrapper(const std::string &config_path = "", int pool_size = 5) {
         try {
+            // 确保 Python 解释器已初始化
+            PyInterpreterManager::getInstance().initialize();
+
             // 导入 Python 模块
             email_module = py::module_::import("email_server");
 
@@ -131,14 +168,3 @@ private:
     py::object email_module; // 保存对 Python 模块的引用
     py::object email_server; // 存储 Python 对象
 };
-
-PYBIND11_MODULE(email_wrapper, m) {
-    py::class_<EmailWrapper>(m, "EmailWrapper")
-            .def(py::init<const std::string &, int>(), py::arg("config_path") = "", py::arg("pool_size") = 5) // 构造函数
-            .def("send_email", &EmailWrapper::send_email)              // 暴露 send_email 方法
-            .def("load_html_content", &EmailWrapper::load_html_content)// 暴露 load_html_content 方法
-            .def("set_html_content", &EmailWrapper::set_html_content); // 暴露 set_html_content 方法
-}
-
-// 全局管理 Python 解释器
-static PyInterpreterManager interpreter_manager;

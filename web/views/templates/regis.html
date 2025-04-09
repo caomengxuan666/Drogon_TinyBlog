@@ -162,26 +162,99 @@
                 <input id="confirmPasswordInput" type="password" required />
                 <label>Confirm Password</label>
             </div>
-            <button onclick="registerBrungle()" class="btn">Register</button>
+            <!-- 添加验证码输入框 -->
+            <div class="input-box">
+                <i class="fas fa-key icon"></i>
+                <input id="verificationCodeInput" type="text" required />
+                <label>Verification Code</label>
+            </div>
+            <!-- 添加验证码发送按钮 -->
+            <button onclick="sendVerificationCode(); event.preventDefault();" class="btn">Send Verification Code</button>
+            <button onclick="registerBrungle(); event.preventDefault();" class="btn">Register</button>
             <div class="login-link">
                 <p>Already have an account? <a href="/login">Login here.</a></p>
             </div>
         </form>
     </div>
     <script>
+        // 发送验证码
+        function sendVerificationCode() {
+            var email = document.querySelector('#emailInput').value;
+
+            // 验证邮箱是否为空
+            if (!email) {
+                alert('Email is required');
+                return;
+            }
+
+            // 发送请求到后端
+            fetch('/generateVerifyToken', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'email=' + encodeURIComponent(email),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'ok') {
+                    alert(data.message || 'Verification code sent successfully!');
+                } else {
+                    alert('Failed to send verification code: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while sending the verification code');
+            });
+        }
+
+        // 注册用户
         function registerBrungle() {
             var username = document.querySelector('#usernameInput').value;
             var email = document.querySelector('#emailInput').value;
             var password = document.querySelector('#passwordInput').value;
             var confirmPassword = document.querySelector('#confirmPasswordInput').value;
+            var verificationCode = document.querySelector('#verificationCodeInput').value;
 
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
+            // 验证必填字段
+            if (!username || !email || !password || !confirmPassword || !verificationCode) {
+                alert('All fields are required');
                 return;
             }
 
-            // Add logic here for saving user data, e.g., using IndexedDB or sending to server
-            alert('Registering user: ' + username);
+            // 验证密码是否匹配
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                    return;
+            }
+
+            // 发送请求到后端
+            fetch('/regis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    username: username,
+                    email: email,
+                    password: password,
+                    confirmPassword: confirmPassword,
+                    verificationCode: verificationCode,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'ok') {
+                    alert(data.message || 'Registration successful!');
+                } else {
+                    alert('Registration failed: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while registering');
+            });
         }
     </script>
 </body>

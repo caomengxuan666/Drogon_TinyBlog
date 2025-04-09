@@ -28,7 +28,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_subdirectory(service)
 # 将view/static 和view/templates复制到构建目录
-file(COPY views/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/views)
+file(COPY views/templates DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/views/templates)
 
 # 拷贝static文件夹
 file(COPY ../static DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/static)

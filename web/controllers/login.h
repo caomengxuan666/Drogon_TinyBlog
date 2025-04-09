@@ -1,6 +1,7 @@
 #pragma once
 
 #include <drogon/HttpController.h>
+#include <drogon/HttpTypes.h>
 
 using namespace drogon;
 
@@ -16,6 +17,8 @@ public:
 
     ADD_METHOD_TO(login::RegisPage, "/regis", Get);
     ADD_METHOD_TO(login::handleRegis, "/regis", Post);
+
+    ADD_METHOD_TO(login::generateVerifyToken,"/generateVerifyToken",Post);
     METHOD_LIST_END
     // your declaration of processing function maybe like this:
     // void get(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback, int p1, std::string p2);

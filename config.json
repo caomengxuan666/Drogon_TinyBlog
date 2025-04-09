@@ -1,6 +1,6 @@
 /* This is a JSON format configuration file
  */
-{
+ {
     "ssl": {
         "cert": "../../trantor/trantor/tests/server.crt",
         "key": "../../trantor/trantor/tests/server.key"
@@ -46,7 +46,8 @@
             "cur",
             "xml",
             "webp",
-            "svg"
+            "svg",
+            "mp3"
         ],
         "mime": {},
         "locations": [

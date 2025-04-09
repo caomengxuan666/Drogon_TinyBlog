@@ -4,10 +4,10 @@
  * @Author       : caomengxuan666 2507560089@qq.com
  * @Version      : 0.0.1
  * @LastEditors  : caomengxuan666 2507560089@qq.com
- * @LastEditTime : 2025-04-07 22:23:19
+ * @LastEditTime : 2025-04-07 22:37:44
  * @Copyright    : PESONAL DEVELOPER CMX., Copyright (c) 2025.
 **/
-
+#pragma once
 #include "qrcode.h"
 
 using refstring=const std::string&;

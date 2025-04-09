@@ -44,6 +44,11 @@ void article::getArticle(const HttpRequestPtr &req,
 
                 // 生成响应
                 auto resp = HttpResponse::newHttpViewResponse("ArticleDetailView", data);
+                
+                // 添加 CORS 头部
+                resp->addHeader("Access-Control-Allow-Origin", "*");
+                resp->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                resp->addHeader("Access-Control-Allow-Headers", "Content-Type");
                 callback(resp);
             } catch (const std::exception &e) {
                 LOG_ERROR << "Error in processing article data: " << e.what();

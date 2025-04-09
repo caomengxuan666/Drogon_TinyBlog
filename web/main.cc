@@ -1,7 +1,6 @@
 #include "controllers/cache.h"
 #include <drogon/drogon.h>
 #include <drogon/orm/Mapper.h>
-
 using namespace drogon;
 using namespace drogon::orm;
 using namespace drogon_model::sqlite3;
@@ -22,7 +21,6 @@ static void cacheArticles() {
     LOG_INFO << "Cache articles at " << buf;
 }
 
-
 int main() {
     drogon::app().addListener("0.0.0.0", 5555);
     drogon::app().loadConfigFile("../config.json");
@@ -36,6 +34,7 @@ int main() {
     drogon::app().getLoop()->runEvery(30.0, []() {
         cacheArticles();
     });
+
 
     drogon::app().run();
     return 0;

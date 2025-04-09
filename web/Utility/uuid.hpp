@@ -5,7 +5,7 @@
  * @Author       : caomengxuan666 2507560089@qq.com
  * @Version      : 0.0.1
  * @LastEditors  : caomengxuan666 2507560089@qq.com
- * @LastEditTime : 2025-04-06 15:08:42
+ * @LastEditTime : 2025-04-08 18:19:15
  * @Copyright    : PESONAL DEVELOPER CMX., Copyright (c) 2025.
 **/
 
@@ -36,6 +36,19 @@ public:
         }
 
         return std::move(oss.str());// 使用std::move返回字符串
+    }
+
+    //生成纯数字字符串
+    static std::string generate_num(size_t length = 32) noexcept {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 9);
+        std::ostringstream oss;
+        for (size_t i = 0; i < length; ++i) {
+            int digit = dis(gen);
+            oss << std::setw(1) << digit;
+        }
+        return std::move(oss.str());
     }
 
     // 生成符合RFC 4122标准的UUID字符串

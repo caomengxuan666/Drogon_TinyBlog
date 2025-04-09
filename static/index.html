@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,27 +15,32 @@
             --border-color: #e7e7e7;
             --hover-color: #f8f9fa;
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             background-color: #f8f9fa;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header {
             background: var(--primary-color);
             color: white;
             padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .nav-links a {
             position: relative;
             color: white;
@@ -43,6 +49,7 @@
             padding: 5px 0;
             transition: color 0.3s;
         }
+
         .nav-links a::after {
             content: '';
             position: absolute;
@@ -53,10 +60,12 @@
             left: 50%;
             transition: width 0.3s, left 0.3s;
         }
+
         .nav-links a:hover::after {
             width: 100%;
             left: 0;
         }
+
         .hero-section {
             height: 300px;
             background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
@@ -67,29 +76,35 @@
             margin: 20px 0;
             border-radius: 10px;
         }
+
         .doc-card {
             background: var(--card-bg);
             border-radius: 12px;
             padding: 25px;
             margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
+
         .doc-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
+
         .doc-card h3 a {
             color: var(--primary-color);
             transition: color 0.3s;
         }
+
         .doc-card h3 a:hover {
             color: var(--accent-color);
         }
+
         .pagination {
             margin: 30px 0;
             text-align: center;
         }
+
         .footer {
             text-align: center;
             padding: 20px;
@@ -97,16 +112,33 @@
             color: white;
             margin-top: 40px;
         }
+
+        /* 按钮样式优化 */
+        .create-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .create-btn:hover {
+            background: #3ac162;
+            box-shadow: 0 0 10px rgba(66, 185, 131, 0.5);
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 margin-top: 15px;
             }
+
             .doc-card {
                 padding: 15px;
             }
         }
     </style>
 </head>
+
 <body>
     <header class="header">
         <div class="container">
@@ -117,6 +149,7 @@
                 <a href="/about">关于</a>
                 <a href="/create/1" class="create-btn">创作</a><!-- 添加创作按钮，默认用用户2发，后面改 -->
                 <a href="/static/index.html">代码文档</a>
+                <a href="/backstage">后台管理</a>
             </nav>
         </div>
     </header>
@@ -150,8 +183,9 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; 2025 文档中心 版权所有</p>
-            <p>Powered by Drogon Framework</p>  
+            <p>Powered by Drogon Framework</p>
         </div>
     </footer>
 </body>
+
 </html>

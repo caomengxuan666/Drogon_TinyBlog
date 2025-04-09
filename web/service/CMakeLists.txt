@@ -13,7 +13,7 @@ find_package(PNG CONFIG REQUIRED)
 include_directories(${Python3_INCLUDE_DIRS})
 
 # 创建接口库
-add_library(email_wrapper INTERFACE)
+add_library(email_wrapper SHARED email_wrapper.cpp)
 
 # 添加头文件路径
 target_include_directories(
@@ -21,10 +21,9 @@ target_include_directories(
                           ${Python3_INCLUDE_DIRS} # Python 头文件路径
 )
 
-# 链接 pybind11 和 Python 库
 target_link_libraries(
-  email_wrapper INTERFACE pybind11::embed # pybind11 嵌入式解释器
-                          ${Python3_LIBRARIES} # Python 库
+  email_wrapper PUBLIC pybind11::embed # pybind11 嵌入式解释器
+  ${Python3_LIBRARIES} # Python 库
 )
 
 add_library(QRCodeGenerator INTERFACE)

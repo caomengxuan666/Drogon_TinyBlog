@@ -5,7 +5,12 @@
 #include <iostream>
 
 namespace py = pybind11;
-
+/**
+ * @author       : caomengxuan
+ * @brief        : 单张QRCode的生成器，调用python进行生成
+ * @note         : 如果有性能需求且需要生成多个图片，使用qrcodepool.h进行大量的url生成。
+ * @return        {*}
+**/
 class QRCodeGenerator {
 public:
     void generate_qr_code(const std::string& save_path, const std::string& data,

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import subprocess
 from threading import Thread
 import os
@@ -37,6 +37,25 @@ BUILD_CMD = [
 
 # 全局变量存储服务进程的 PID
 SERVICE_PID = None
+
+@app.route('/download_db', methods=['GET'])
+def download_db():
+    """提供数据库文件下载"""
+    db_file_path = "/home/cmx/codespace/tiny_blog/web/DataBase/TinyBlog.db"
+    
+    if not os.path.exists(db_file_path):
+        return jsonify({"error": "Database file not found"}), 404
+    
+    try:
+        # 使用 send_file 发送文件
+        return send_file(
+            db_file_path,
+            as_attachment=True,  # 设置为附件下载
+            download_name="TinyBlog.db",  # 下载时的文件名
+            mimetype="application/octet-stream"  # MIME 类型
+        )
+    except Exception as e:
+        return jsonify({"error": f"Failed to send file: {str(e)}"}), 500
 
 def start_service():
     """在后台启动服务"""

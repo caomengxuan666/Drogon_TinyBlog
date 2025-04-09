@@ -141,5 +141,11 @@ void IndexCtrl::asyncHandleHttpRequest(
     data.insert("userAvatar", userAvatar);
 
     auto resp = HttpResponse::newHttpViewResponse("HomePageView", data);
+
+    // 添加 CORS 头部
+    resp->addHeader("Access-Control-Allow-Origin", "*");
+    resp->addHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    resp->addHeader("Access-Control-Allow-Headers", "Content-Type");
+
     callback(resp);
 }
